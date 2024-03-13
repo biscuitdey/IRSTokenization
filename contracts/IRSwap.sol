@@ -10,6 +10,7 @@ contract IRSwap  {
         uint256 fixedRate;          // fixed rate
         uint256 fee;                // contract fee
         address assetContract;      // USDT
+        uint256 startDate;          // timestamp
     }
 
     struct RateContract {
