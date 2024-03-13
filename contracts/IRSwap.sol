@@ -27,7 +27,7 @@ contract IRSwap  {
 
     uint256 public swapFee;
     address public feeAccount;
-    uint256 public floatRate;  // float rate set every day at 5 pm
+    uint256 public floatRate;  // float rate set every day at 8:30 am
 
     function add_fixed_RateContract(uint256 id, uint256 notional, address owner, uint256 fixedRate) external {
         fixed_RateContracts[id] = RateContract(notional,owner,fixedRate, false);
