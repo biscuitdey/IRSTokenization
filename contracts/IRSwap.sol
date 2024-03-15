@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "hardhat/console.sol";
 
 contract IRSwap {
     struct SWAP {
@@ -11,14 +12,6 @@ contract IRSwap {
         uint256 fixedRate; // fixed rate
         IERC20 usdt; // USDT
         uint256 cashFlowDate; // timestamp
-    }
-
-    struct RateContract {
-        uint256 notional; // total amount
-        address owner; // to receive funds
-        uint256 rate; // fix rate
-        bool hasSwap; // true if a swap was set
-        //uint256 initialPayment; // timestamp of the first swap. the others would happen after 30 days.
     }
 
     mapping(uint256 => SWAP) public swapContracts;
@@ -48,10 +41,6 @@ contract IRSwap {
         );
     }
 
-    uint256 public fixedAmountTotal;
-    uint256 public floatAmountTotal;
-    uint256 public feeAmountTotal;
-
     // calculate swap. get float rate.
     function executeSwap(uint256 id) external {
         SWAP storage swap = swapContracts[id];
@@ -65,11 +54,12 @@ contract IRSwap {
         uint256 fee = ((swap.notional * swapFee) / 1000) / 2;
 
         uint256 fixedAmount = ((swap.notional * swap.fixedRate) / 100) - fee;
-
         uint256 floatAmount = ((swap.notional * benchmark) / 100) - fee;
-        fixedAmountTotal = fixedAmount;
-        floatAmountTotal = floatAmount;
-        feeAmountTotal = fee;
+
+        console.log("Fee: ", fee);
+        console.log("Fixed Amount: ", fixedAmount);
+        console.log("Float amount: ", floatAmount);
+
         //transferFrom(address from, address to, uint256 value) external returns (bool);
         //fixed receives float
         swap.usdt.transferFrom(
