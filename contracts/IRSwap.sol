@@ -11,17 +11,18 @@ contract IRSwap {
         address fixedRate_Account; // fixed rate address to receive funds
         uint256 fixedRate; // fixed rate
         IERC20 usdt; // USDT
-        uint256 cashFlowDate; // timestamp
+        uint256 cashFlowDate; // timestamp // change to payment date
     }
-
+    // this mapping will represent IRS cash flows
     mapping(uint256 => SWAP) public swapContracts;
 
-    uint256 public swapFee = 1;
+    uint256 public swapFee = 1; //fee to process IRS
     address public feeAccount = 0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db;
     uint256 public benchmark = 2; // float rate set every day at 8:30 am
 
     uint256 public MONTH_IN_SECONDS = 10;
 
+// cash flow of the IRS
     function createSwapContract(
         uint256 id,
         uint256 notional,
@@ -42,6 +43,7 @@ contract IRSwap {
     }
 
     // calculate swap. get float rate.
+    // id represents the cash flow
     function executeSwap(uint256 id) external {
         SWAP storage swap = swapContracts[id];
 
@@ -53,8 +55,8 @@ contract IRSwap {
 
         uint256 fee = ((swap.notional * swapFee) / 1000) / 2;
 
-        uint256 fixedAmount = ((swap.notional * swap.fixedRate) / 100) - fee;
-        uint256 floatAmount = ((swap.notional * benchmark) / 100) - fee;
+        uint256 fixedAmount = ((swap.notional * swap.fixedRate) / 100);
+        uint256 floatAmount = ((swap.notional * benchmark) / 100);
 
         console.log("Fee: ", fee);
         console.log("Fixed Amount: ", fixedAmount);
@@ -75,7 +77,7 @@ contract IRSwap {
             fixedAmount
         );
 
-        // pay fee
+        // pay fee //BB consider how/who pays the fee??
         swap.usdt.transferFrom(swap.fixedRate_Account, feeAccount, fee);
         swap.usdt.transferFrom(swap.floatRate_Account, feeAccount, fee);
     }
