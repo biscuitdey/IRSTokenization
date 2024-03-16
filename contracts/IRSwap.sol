@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "hardhat/console.sol";
-
+// This contract represents IRS cashflow 
 contract IRSwap {
     struct SWAP {
         uint256 notional; // total amount
